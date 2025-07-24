@@ -39,13 +39,20 @@ const registerUser = async (req, res) => {
             .status(201)
             .json({
                 message: "User registered successfully",
-                user: newUser,
+                user: {
+                    _id: newUser._id,
+                    username: newUser.username,
+                    email: newUser.email,
+                    createdAt: newUser.createdAt,
+                },
                 token,
             });
+
     } catch (error) {
         return res.status(500).json({ error, message: "Internal Server Error" });
     }
 }
+
 const loginUser = async (req, res) => {
     try {
         const { emailOrUsername, password } = req.body;
@@ -73,17 +80,23 @@ const loginUser = async (req, res) => {
             .status(200)
             .json({
                 message: "User logged in successfully",
-                user,
+                user: {
+                    _id: user._id,
+                    username: user.username,
+                    email: user.email,
+                    createdAt: user.createdAt,
+                },
                 token,
             });
     } catch (error) {
         return res.status(500).json({ error, message: "Internal Server Error" });
     }
 }
+
 const logoutUser = async (req, res) => {
     try {
         const user = req.user;
-        
+
         if (!user) {
             return res.status(400).json({ message: "No user is logged in" });
         }
@@ -96,8 +109,30 @@ const logoutUser = async (req, res) => {
     }
 }
 
+const fetchUser = async (req, res) => {
+    try {
+        const id = req.user.id;
+
+        if (!id) {
+            return res.status(401).json({ message: "Unauthorized request" });
+        }
+
+        const user = await User.findById(id).select("-password");
+
+        if (!user) {
+            return res.status(403).json({ message: "Unauthorized request" });
+        }
+
+        return res.status(200).json({ user });
+
+    } catch (error) {
+        return res.status(500).json({ error, message: "Internal server error" });
+    }
+}
+
 export {
     registerUser,
     loginUser,
     logoutUser,
+    fetchUser,
 }
