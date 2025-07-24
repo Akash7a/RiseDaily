@@ -13,7 +13,9 @@ app.use(express.urlencoded({ extended: true }));
 
 // userRoutes
 import { userRouter } from "./routes/user.route.js";
+import { taskRouter } from "./routes/task.route.js";
 
 app.use("/api/v1/users",userRouter);
+app.use("/api/v1/tasks",taskRouter);
 
 export default app;

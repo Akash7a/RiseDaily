@@ -49,7 +49,7 @@ const registerUser = async (req, res) => {
             });
 
     } catch (error) {
-        return res.status(500).json({ error, message: "Internal Server Error" });
+        return res.status(500).json({ success: false, error, message: "Internal server error", error: error.message });
     }
 }
 
@@ -89,7 +89,7 @@ const loginUser = async (req, res) => {
                 token,
             });
     } catch (error) {
-        return res.status(500).json({ error, message: "Internal Server Error" });
+        return res.status(500).json({ success: false, error, message: "Internal server error", error: error.message });
     }
 }
 
@@ -105,7 +105,7 @@ const logoutUser = async (req, res) => {
         return res.status(200).json({ message: "User logged out successfully" });
 
     } catch (error) {
-        return res.status(500).json({ error, message: "Internal Server Error" });
+        return res.status(500).json({ success: false, error, message: "Internal server error", error: error.message });
     }
 }
 
@@ -126,7 +126,7 @@ const fetchUser = async (req, res) => {
         return res.status(200).json({ user });
 
     } catch (error) {
-        return res.status(500).json({ error, message: "Internal server error" });
+        return res.status(500).json({ success: false, error, message: "Internal server error", error: error.message });
     }
 }
 
