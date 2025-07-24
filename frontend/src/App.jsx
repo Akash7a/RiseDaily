@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { Home, Login, Signup, Dashboard } from './index.js';
 import ProtectedRoute from './components/ProtectedRoute.jsx';
 import { fetchUser } from './features/userSlice.js';
@@ -7,43 +7,34 @@ import { useDispatch, useSelector } from 'react-redux';
 
 const App = () => {
   const dispatch = useDispatch();
-  const location = useLocation();
+  const navigate = useNavigate();
 
-  const { user, token } = useSelector((state) => state.user);
+  const { user, token, loading } = useSelector((state) => state.user);
+
 
   useEffect(() => {
-    dispatch(fetchUser());
-  }, [dispatch]);
+    if (!user && token && !loading) {
+      dispatch(fetchUser());
+    }
+  }, [user, token, loading, dispatch]);
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <p className="text-lg font-medium">Loading...</p>
+      </div>
+    )
+  }
 
   return (
     <Routes>
       {/* Public routes */}
-      <Route
-        path="/login"
-        element={user && token ? <Navigate to="/" /> : <Login />}
-      />
-      <Route
-        path="/signup"
-        element={user && token ? <Navigate to="/" /> : <Signup />}
-      />
+      <Route path="/login" element={<Login />} />
+      <Route path="/signup" element={<Signup />} />
 
       {/* Protected routes */}
-      <Route
-        path="/dashboard"
-        element={
-          <ProtectedRoute>
-            <Dashboard />
-          </ProtectedRoute>
-        }
-      />
-
-      {/* Root route - conditional redirect */}
-      <Route
-        path="/"
-        element={
-          user && token ? <Home /> : <Navigate to="/login" state={{ from: location }} replace />
-        }
-      />
+      <Route path="/dashboard" element={<ProtectedRoute><Dashboard /> </ProtectedRoute>} />
+      <Route path="/" element={<ProtectedRoute> <Home /> </ProtectedRoute>} />
     </Routes>
   );
 };

@@ -1,14 +1,20 @@
-import React from 'react'
-import { Navigate } from 'react-router-dom'
-import { useSelector } from 'react-redux'
+import React, { useEffect } from 'react';
+import { Navigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
 
 const ProtectedRoute = ({ children }) => {
-    const { user, token } = useSelector((state) => state.user);
+    const { user, token, loading } = useSelector((state) => state.user);
 
-    if (!user || !token) {
-        return <Navigate to="/login" replace />
+    if (loading) {
+        return (
+            <div className="flex justify-center items-center min-h-screen">
+                <p className="text-lg font-medium">Loading...</p>
+            </div>
+        )
     }
-    return children;
-}
 
-export default ProtectedRoute
+
+    return user || token ? children : <Navigate to="/login" replace={true} />
+};
+
+export default ProtectedRoute;

@@ -1,9 +1,12 @@
-import React, { useState } from 'react';
-import { useDispatch, } from 'react-redux';
-import { Link, } from "react-router-dom";
+import React, { useEffect, useState } from 'react';
+import { useDispatch,useSelector } from 'react-redux';
+import { Link, useNavigate, } from "react-router-dom";
 import { loginUser } from '../features/userSlice';
 
 const Login = () => {
+  const { user, token, loading } = useSelector((state) => state.user);
+  const navigate = useNavigate();
+
   const [data, setData] = useState({
     emailOrUsername: "",
     password: "",
@@ -17,6 +20,12 @@ const Login = () => {
       [name]: value,
     }));
   }
+
+  useEffect(()=>{
+    if(user || token){
+      navigate("/");
+    }
+  },[token,user]);
 
   const submitHandler = (e) => {
     e.preventDefault();
